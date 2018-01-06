@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SearchView</string>
+    <string name="lengDialogTitle">Выбрать язык</string>
+    <string name="lengDialogOk">Да</string>
+    <string name="lengDialogNext">Вперед</string>
+</resources>

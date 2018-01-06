@@ -1,0 +1,83 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            card_view:cardCornerRadius="8dp"
+            card_view:cardUseCompatPadding="true"
+            card_view:cardElevation="4dp"
+            card_view:cardMaxElevation="4dp"
+            card_view:contentPadding="4dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/img_icon"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="10dp"
+                    android:scaleType="centerCrop"
+                    android:background="#757575" />
+
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tv_price"
+                    android:layout_alignBottom="@+id/tv_price"
+                    android:layout_toEndOf="@+id/img_icon"
+                    android:layout_toRightOf="@+id/img_icon"
+                    android:maxLines="1"
+                    android:text="Title"
+                    android:textSize="20dp" />
+                    <!--<RatingBar
+                        android:numStars="3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />-->
+
+
+                <TextView
+                    android:id="@+id/tv_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/img_icon"
+                    android:layout_toEndOf="@+id/img_icon"
+                    android:layout_toRightOf="@+id/img_icon"
+                    android:text="Type" />
+
+                <TextView
+                    android:id="@+id/tv_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@+id/img_icon"
+                    android:layout_marginEnd="11dp"
+                    android:layout_marginRight="11dp"
+                    android:gravity="right"
+                    android:text="Price" />
+
+                <ImageView
+                    android:id="@+id/img_stateDownload"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_alignBottom="@+id/tv_type"
+                    android:layout_alignStart="@+id/tv_price"
+                    android:background="#757575"
+                    android:scaleType="centerCrop" />
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+    </RelativeLayout>
+
+</layout>

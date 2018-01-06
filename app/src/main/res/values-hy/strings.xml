@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SearchView</string>
+    <string name="lengDialogNext">Հաջորդ</string>
+    <string name="lengDialogOk">Այո</string>
+    <string name="lengDialogTitle">Ընտրել լեզուն</string>
+</resources>

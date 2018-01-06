@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SearchView</string>
+    <string name="lengDialogTitle">Choose lenguage</string>
+    <string name="lengDialogOk">OK</string>
+    <string name="lengDialogNext">Next</string>
+    <string name="search_hint">Search Animation</string>
+</resources>
