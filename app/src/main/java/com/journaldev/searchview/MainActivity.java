@@ -7,41 +7,43 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.Blob;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements CallBackk  {
 
-    private static final String Locale_Preference = "Locale Preference";
+    private static final String LAST_ID = "LAST_ID";
     private static final String Locale_KeyValue = "Saved Locale";
-    private  final String Language = "en";
-    private  final long ID_Last_Animation = 3;
+    private  final String Language = "ru";
+    private  final long ID_Last_Animation = 0;
+    private CircularProgressView progressView;
 
 
     public static  String ID = "id";
@@ -77,69 +79,49 @@ public class MainActivity extends AppCompatActivity  {
     private DBHelper db;
     private SharedPreferences sPref;
 
+    TextView textView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        isFirstTime();
+
+        progressView = (CircularProgressView) findViewById(R.id.progress_view);
+        progressView.startAnimation();
         listView = (ListView) findViewById(R.id.list_view);
         items = new ArrayList();
         firestore = FirebaseFirestore.getInstance();
         db = new  DBHelper(this);
 
-
-
-
-        Query coll = firestore.collection("Animation");
-              //  .whereEqualTo("name", "lion")
-               // .whereEqualTo("name", "snake");
-               /* .whereLessThan("name","lion")
-                .whereGreaterThan("name","lion")*/
-
-
-               // .orderBy("title")
-
-                coll.get()
+         firestore.collection("Animation")
+                        .orderBy(ID)
+                        .startAt(getLastID(LAST_ID)+1)
+                        .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()){
-                            if(task.getResult().size()>ID_Last_Animation) {
+                            long i=0;
                                 for (DocumentSnapshot document : task.getResult()) {
-                                    System.out.println("+++++"+putDataInDB(document,0));
+                                    putDataInDB(document,0);
+                                    if(i == task.getResult().size()-1){
+                                        setLastID(LAST_ID,document.getLong(ID));
+                                    }
+                                    i++;
                                 }
-                            }
+                                progressView.stopAnimation();
+                                progressView.setVisibility(View.GONE);
                         }
+                        RelativeLayout rl = (RelativeLayout)findViewById(R.id.rel_layout);
+                        rl.setBackgroundColor(Color.WHITE);
                         Cursor c = db.query(MainActivity.ID);
                         listAdapter = new ListAdapter(MainActivity.this, putItemsInArrayList(c));
                         listView.setAdapter(listAdapter);
                     }
                 });
-
-
-       /* db.collection("Animation")//.document("qbwjScfiMWB4wtSXYx2x");
-        .get()
-        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-
-
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (DocumentSnapshot document : task.getResult()) {
-                        StoreModel storeModel = setItemsToArray(document);
-                        items.add(storeModel);
-                    }
-                }
-                listAdapter = new ListAdapter(MainActivity.this, items);
-                listView.setAdapter(listAdapter);
-            }
-        });
-*/
-
-
-
-
-
 
 
 
@@ -182,17 +164,17 @@ public class MainActivity extends AppCompatActivity  {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //Toast.makeText(MainActivity.this, newText, Toast.LENGTH_SHORT).show();
-                if(newText.equals("")){
+                if(newText.isEmpty()){
                     Cursor c = db.query(MainActivity.ID);
                     listAdapter = new ListAdapter(MainActivity.this, putItemsInArrayList(c));
                     listView.setAdapter(listAdapter);
+                } else {
+                  //  if (!newText.equals("~")) {
+                        Cursor c = db.getAnimationListByKeyword(newText);
+                        listAdapter = new ListAdapter(MainActivity.this, putItemsInArrayList(c));
+                        listView.setAdapter(listAdapter);
+                  //  }
                 }
-                  if(!newText.equals(" ")){
-                     Cursor c = db.getAnimationListByKeyword(newText);
-                      listAdapter = new ListAdapter(MainActivity.this, putItemsInArrayList(c));
-                      listView.setAdapter(listAdapter);
-                  }
                 return false;
             }
 
@@ -201,12 +183,6 @@ public class MainActivity extends AppCompatActivity  {
 
         return super.onCreateOptionsMenu(menu);
     }
-
-
-
-
-
-
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -231,15 +207,12 @@ public class MainActivity extends AppCompatActivity  {
                         .buttonRippleColor(R.color.colorAttentionDialogBackground)
                         .content("Your Activities need to inherit the AppCompat themes in order to work correctly with this library.")
                         .positiveText("Agree")
-
                         .show();
                 Toast.makeText(this, "This is Fored item", Toast.LENGTH_SHORT).show();
                 return true;
-
         }
         return super.onOptionsItemSelected(item);
     }
-
   /*  public void chooseLanguageDialog(){
         dialog = new Dialog(MainActivity.this);
         dialog.setContentView(R.layout.language_dialog);
@@ -311,6 +284,21 @@ public class MainActivity extends AppCompatActivity  {
         }
 
     }*/
+
+    private boolean isFirstTime() {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        boolean ranBefore = preferences.getBoolean("RanBefore", false);
+        if (!ranBefore) {
+            //show dialog if app never launch
+            //dialog.show();
+            setLastID(LAST_ID,0);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("RanBefore", true);
+            editor.commit();
+        }
+        return !ranBefore;
+    }
+
     private void putItemsInArrayList (DocumentSnapshot documentSnapshot,int stateDownload){
         String title = documentSnapshot.getString(TITLE);
         String linkIcon = documentSnapshot.getString(LINK_ICON);
@@ -344,7 +332,7 @@ public class MainActivity extends AppCompatActivity  {
         return  items;
     }
 
-
+//Firestore-ic stacac tvyalner@ texadrum enq local db-um
     private long putDataInDB (DocumentSnapshot documentSnapshot,int stateDownload) {
         long id = documentSnapshot.getLong(ID);
         Map<String,String> temp = (Map<String, String>) documentSnapshot.getData().get(TITLE);
@@ -360,16 +348,34 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
-    public String getSaveDataString(String paramString) {
+    public String getDefaultLang(String paramString) {
 
         sPref = getSharedPreferences(paramString, 0);
         return sPref.getString(paramString, "");
     }
 
-    public void setSaveData(String name, String data) {
+    public void setDefaultLang(String name, String data) {
         sPref = getSharedPreferences(name, MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
         editor.putString(name, data);
         editor.commit();
+    }
+
+    public long getLastID(String paramString) {
+
+        sPref = getSharedPreferences(paramString, 0);
+        return sPref.getLong(paramString, 0);
+    }
+
+    public void setLastID(String name, long data) {
+        sPref = getSharedPreferences(name, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putLong(name, data);
+        editor.commit();
+    }
+
+    @Override
+    public void clickInItem(int position) {
+        Log.i("sdsdsds",position+"");
     }
 }

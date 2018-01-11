@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<LinearLayout android:orientation="vertical"
+<RelativeLayout android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:id="@+id/rel_layout"
+    android:background="@color/colorAttentionDialogBackground"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <com.github.rahatarmanahmed.cpv.CircularProgressView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/progress_view"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        app:cpv_color="@color/colorPrimary"
+        app:cpv_animAutostart="true"
+        android:visibility="visible"
+        app:cpv_indeterminate="true" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -20,7 +39,9 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
-
-
     </LinearLayout>
+
+    </RelativeLayout>
+
+
 

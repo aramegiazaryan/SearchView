@@ -78,8 +78,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return affectedRows;
     }
 
-
-
+    //search dashtic vercnuma string u hamematuma tag dastum exac tvyalneri het u veradarznum e ham@nknox ardyunq@
     public Cursor  getAnimationListByKeyword(String search) {
         //Open connection to read only
         SQLiteDatabase db = getReadableDatabase();
@@ -109,6 +108,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+
+    //db-ic @st id-i talis e datan
     public Cursor query (String search) {
         SQLiteDatabase db = getWritableDatabase();
         /*Cursor c=db.query(

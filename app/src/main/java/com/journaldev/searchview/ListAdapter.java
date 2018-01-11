@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -16,11 +17,13 @@ public class ListAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     List<StoreModel> items;
     Context context;
+    CallBackk callBackk;
 
     public ListAdapter(Context context, List<StoreModel> items){
         this.items=items;
         layoutInflater= LayoutInflater.from(context);
         this.context = context;
+//        this.callBackk = callBackk;
     }
 
     @Override
@@ -47,6 +50,7 @@ public class ListAdapter extends BaseAdapter {
         if(convertView==null){
             convertView=layoutInflater.inflate(R.layout.row_item, parent, false);
         }
+        callBackk = (CallBackk) context;
         TextView textTitle= (TextView) convertView.findViewById(R.id.tv_title);
         TextView textPrice= (TextView) convertView.findViewById(R.id.tv_price);
         TextView textType= (TextView) convertView.findViewById(R.id.tv_type);
@@ -56,6 +60,14 @@ public class ListAdapter extends BaseAdapter {
         textTitle.setText(current.getTitle());
         textPrice.setText(current.getPrice());
         textType.setText(current.getType());
+
+        textType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callBackk.clickInItem(position);
+            }
+        });
+//
         Glide.with(context)
                 .load(current.getLinkIcon())
                 .into(imageIcon);
