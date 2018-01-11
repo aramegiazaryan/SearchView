@@ -123,12 +123,6 @@ public class MainActivity extends AppCompatActivity implements CallBackk  {
                     }
                 });
 
-
-
-
-
-
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
