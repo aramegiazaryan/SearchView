@@ -69,11 +69,11 @@
 
                 <ImageView
                     android:id="@+id/img_stateDownload"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="32dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_height="32dp"
+                    android:layout_marginRight="10dp"
                     android:layout_alignBottom="@+id/tv_type"
-                    android:layout_alignStart="@+id/tv_price"
-                    android:background="#757575"
                     android:scaleType="centerCrop" />
 
             </RelativeLayout>

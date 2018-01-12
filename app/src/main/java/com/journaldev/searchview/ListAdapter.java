@@ -73,7 +73,7 @@ public class ListAdapter extends BaseAdapter {
                 .into(imageIcon);
 
         if(current.getStateDownload()==0){
-           link = R.drawable.stop32x32;
+           link = R.drawable.download32x32;
         }else {link = R.drawable.play32x32;}
         Glide.with(context)
                 .load(link)
