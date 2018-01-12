@@ -7,33 +7,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <LinearLayout
-        android:visibility="gone"
-        android:id="@+id/inform_layout"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:textSize="36dp"
-            android:gravity="center"
-            android:text="information about app"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
-        <TextView
-            android:gravity="center"
-            android:text="sdsdsdsdsdsdsdsdsdsdssdsdsd"
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:text="OK"
-            android:id="@+id/infOK"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/lang_layout"

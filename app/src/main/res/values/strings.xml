@@ -4,4 +4,5 @@
     <string name="lengDialogOk">OK</string>
     <string name="lengDialogNext">Next</string>
     <string name="search_hint">Search Animation</string>
+    <string name="informationApp">Information about app</string>
 </resources>

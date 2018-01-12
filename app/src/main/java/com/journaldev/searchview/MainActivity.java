@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -40,13 +41,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements CallBackk {
+public class MainActivity extends AppCompatActivity implements CallBackk,LanguageDialog.DialogListener {
 
     private static final String LAST_ID = "LAST_ID";
-    private static final String Locale_KeyValue = "Saved Locale";
-    private final String Language = "ru";
-    private String LANG = "LANGUAGE";
-    private final long ID_Last_Animation = 0;
+    public final static String LANG = "LANGUAGE";
     private CircularProgressView progressView;
 
     public static String ID = "id";
@@ -66,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements CallBackk {
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
     private Locale locale;
-    //  private Dialog dialog;
     private ListAdapter listAdapter;
     private List<StoreModel> items;
     private FirebaseFirestore firestore;
@@ -156,9 +153,9 @@ public class MainActivity extends AppCompatActivity implements CallBackk {
     }
 
     public void main() {
-        progressView = (CircularProgressView) findViewById(R.id.progress_view);
+        progressView = findViewById(R.id.progress_view);
         progressView.startAnimation();
-        listView = (ListView) findViewById(R.id.list_view);
+        listView = findViewById(R.id.list_view);
         items = new ArrayList();
         firestore = FirebaseFirestore.getInstance();
         db = new DBHelper(this);
@@ -182,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements CallBackk {
                             progressView.stopAnimation();
                             progressView.setVisibility(View.GONE);
                         }
-                        RelativeLayout rl = (RelativeLayout) findViewById(R.id.rel_layout);
+                        RelativeLayout rl = findViewById(R.id.rel_layout);
                         rl.setBackgroundColor(Color.WHITE);
                         Cursor c = db.query(MainActivity.ID);
                         listAdapter = new ListAdapter(MainActivity.this, putItemsInArrayList(c));
@@ -190,58 +187,8 @@ public class MainActivity extends AppCompatActivity implements CallBackk {
                     }
                 });
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-    }
-
-
-    public void chooseLanguageDialog() {
-//        dialog = new Dialog(MainActivity.this);
-//        dialog.setContentView(R.layout.language_dialog);
-//        dialog.setCancelable(false);
-//        inform_layout = dialog.findViewById(R.id.inform_layout);
-//        inform_layout = dialog.findViewById(R.id.inform_layout);
-//        imageViewRus = dialog.findViewById(R.id.img_rus);
-//        imageViewEng = dialog.findViewById(R.id.img_eng);
-//        imageViewRus.setOnClickListener(this);
-//        imageViewEng.setOnClickListener(this);
-//        Window window = dialog.getWindow();
-//        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, 900);
-
-        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-        View mView = getLayoutInflater().inflate(R.layout.language_dialog, null);
-        ImageView imgRus = mView.findViewById(R.id.img_rus);
-        ImageView imgEng = mView.findViewById(R.id.img_eng);
-        Button buttonOk = mView.findViewById(R.id.infOK);
-
-        lang_layoutt = mView.findViewById(R.id.lang_layout);
-        inform_layout = mView.findViewById(R.id.inform_layout);
-
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.cancel();
-                Log.i("ssssssssss","sssssssssss");
-            }
-        });
-
-        imgRus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkLanguage("ru");
-                lang_layoutt.setVisibility(View.GONE);
-                inform_layout.setVisibility(View.VISIBLE);
-
-                // dialog.setCancelable(false);
-                //  dialog.cancel();
-
-            }
-        });
-
-        mBuilder.setView(mView);
-        dialog = mBuilder.create();
-        dialog.show();
-
     }
 
 
@@ -266,45 +213,21 @@ public class MainActivity extends AppCompatActivity implements CallBackk {
         // updateTexts();//Update texts according to locale
     }
 
-    //Get locale method in preferences
-    public void loadLocale() {
-        String language = sharedPreferences.getString(Locale_KeyValue, "");
-        changeLocale(language);
-    }
 
     private boolean isFirstTime() {
         preferences = getPreferences(MODE_PRIVATE);
         ranBefore = preferences.getBoolean("RanBefore", false);
         if (!ranBefore) {
             //show dialog if app never launch
-            chooseLanguageDialog();
-            //   dialog.show();
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("RanBefore", true);
+            editor.apply();
+            LanguageDialog dialog = new LanguageDialog();
+            dialog.show(getSupportFragmentManager(), null);
         }
         return ranBefore;
     }
 
-//    @Override
-//    public void onClick(View view) {
-//        switch (view.getId()) {
-//            case R.id.img_rus:
-////                checkLanguage("ru");
-//                break;
-//            case R.id.img_eng:
-//                checkLanguage("en");
-//                break;
-//        }
-//    }
-
-
-    public void checkLanguage(String language) {
-        setDefaultLang(language);
-        setLangRecreate(language);
-        changeLocale(language);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("RanBefore", true);
-        editor.apply();
-        inform_layout.setVisibility(View.GONE);
-    }
 
     private void putItemsInArrayList(DocumentSnapshot documentSnapshot, int stateDownload) {
         String title = documentSnapshot.getString(TITLE);
@@ -340,6 +263,7 @@ public class MainActivity extends AppCompatActivity implements CallBackk {
 
     //Firestore-ic stacac tvyalner@ texadrum enq local db-um
     private long putDataInDB(DocumentSnapshot documentSnapshot, int stateDownload) {
+        String kk = getDefaultLang();
         long id = documentSnapshot.getLong(ID);
         Map<String, String> temp = (Map<String, String>) documentSnapshot.getData().get(TITLE);
         String title = temp.get(getDefaultLang());
@@ -368,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements CallBackk {
         sPref = getSharedPreferences(LANG, MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
         editor.putString(LANG, data);
-        editor.commit();
+        editor.apply();
     }
 
     public long getLastID(String paramString) {
@@ -380,11 +304,18 @@ public class MainActivity extends AppCompatActivity implements CallBackk {
         sPref = getSharedPreferences(name, MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
         editor.putLong(name, data);
-        editor.commit();
+        editor.apply();
     }
 
     @Override
     public void clickInItem(int position) {
         Log.i("sdsdsds", position + "");
     }
+
+    @Override
+    public void updateResult(String lang) {
+        setDefaultLang(lang);
+        main();
+    }
+
 }
